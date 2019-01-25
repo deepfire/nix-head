@@ -21,9 +21,11 @@
     : cd nix-head
     : nix-shell --no-build-output --cores 0 -j4
 
+    ..which will give you a shell with =ghcHEAD= and =cabal-install= (by default).
+
 *** Choosing desired packages
 
-    As an easy option, edit the 'extras' binding in =shell.nix=.
+    : nix-shell --arg pkgs '["aeson" "cabal-install"]'    # Defaults to just 'cabal-install'
 
 *** Changing Nixpkgs pin
 
