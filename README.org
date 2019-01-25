@@ -27,11 +27,11 @@
 |---------------------------------+------------------------------------------------------------------+---------------------------------------|
 | Change Nixpkgs pin              | =./pin-nixpkgs.sh REVISION [GITHUB-USERNAME]=                    | =GITHUB-USERNAME= defaults to =NixOS= |
 |---------------------------------+------------------------------------------------------------------+---------------------------------------|
-| Different packages in the shell | =nix-shell --arg pkgs '["aeson" "cabal-install"]'=               | Defaults to just =cabal-install=.     |
-|                                 | ..or edit =default-packages.nix=.                                |                                       |
+| Different packages in the shell | =nix-shell --arg pkgs '["aeson" "cabal-install"]'=           | Defaults to just *cabal-install*.     |
+|                                 | ..or edit *default-packages.nix*.                                |                                       |
 |---------------------------------+------------------------------------------------------------------+---------------------------------------|
 | Select a GHC compiler           | =nix-shell --argstr compiler ghc863=                             | Defaults to =ghcHEAD=.                |
-|                                 | ..or edit =default-compiler.nix=.                                |                                       |
+|                                 | ..or edit *default-compiler.nix*.                                |                                       |
 |---------------------------------+------------------------------------------------------------------+---------------------------------------|
 | Build a single package          | =./build.sh aeson=                                               |                                       |
 |---------------------------------+------------------------------------------------------------------+---------------------------------------|
@@ -56,3 +56,31 @@
 , doCheck ? true     :: Bool
 }
 #+END_SRC
+
+* Mass rebuild workflow
+
+  This is a workflow optimised for debugging all problems for the requested
+  package set.
+
+  1. Edit pins (=./pin-package.sh=, and/or =extra-overrides.nix= edits).
+
+  2. Either =./build.sh= the affected packages for individual builds (failure logs
+     saved under =./logs=), or:
+
+  3. =./all-failures=, which will attempt to build all requested packages, but
+     won't stop on the first failure -- proceeding until nothing else can be
+     built.  This is a batch operation that is intended to give you inputs for
+     step #1, so that you can retry efficiently.
+
+* Leveraging as package set supplier for your program
+
+  The Nixpkgs package set provided by this can be leveraged during development of
+  another program, where chasing latest GHC is desired for some obscure reason.
+
+  For this:
+
+  1. Fork https://github.com/deepfire/nix-head -- since you'll be adding overrides.
+  2. =git clone --recurse-submodules https://github.com/${USER}/nix-head= in your repository.
+  3. Use the provided Nixpkgs package set:
+
+     : nixpkgs = import ./nix-head/nixpkgs.nix {};
