@@ -8,7 +8,7 @@ in
 , compiler    ? import ./default-compiler.nix
 , withHoogle  ? false
   ## 3. Choose extra packages
-, pkgs        ? ["cabal-install"]
+, pkgs        ? import ./default-packages.nix
 }:
 let
   nixpkgs' = import ./nixpkgs.nix { inherit compiler nixpkgs; }; # Patched Nixpkgs with overlays.

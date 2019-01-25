@@ -5,39 +5,45 @@
 3. Custom package pins & overrides
 4. Nixpkgs pinning
 
-* How?
+* Quick setup (Nix assumed installed)
 
-*** Quick setup (Nix assumed installed)
+  : git clone --recurse-submodules https://github.com/deepfire/nix-head
 
-    : git clone --recurse-submodules https://github.com/deepfire/nix-head
+  ..or, equivalently:
 
-    ..or, equivalently:
+  : git clone https://github.com/deepfire/nix-head
+  : ./update-head-hackage.sh
 
-    : git clone https://github.com/deepfire/nix-head
-    : ./update-head-hackage.sh
+  ..and then:
 
-    ..and then:
+  : cd nix-head
+  : nix-shell --no-build-output --cores 0 -j4
 
-    : cd nix-head
-    : nix-shell --no-build-output --cores 0 -j4
+  ..which will give you a shell with =ghcHEAD= and =cabal-install= (by default).
 
-    ..which will give you a shell with =ghcHEAD= and =cabal-install= (by default).
+* Quickref
 
-*** Choosing desired packages
+| What                            | How                                                              |                                       |
+|---------------------------------+------------------------------------------------------------------+---------------------------------------|
+| Change Nixpkgs pin              | =./pin-nixpkgs.sh REVISION [GITHUB-USERNAME]=                    | =GITHUB-USERNAME= defaults to =NixOS= |
+|---------------------------------+------------------------------------------------------------------+---------------------------------------|
+| Different packages in the shell | =nix-shell --arg pkgs '["aeson" "cabal-install"]'=               | Defaults to just =cabal-install=.     |
+|                                 | ..or edit =default-packages.nix=.                                |                                       |
+|---------------------------------+------------------------------------------------------------------+---------------------------------------|
+| Select a GHC compiler           | =nix-shell --argstr compiler ghc863=                             | Defaults to =ghcHEAD=.                |
+|                                 | ..or edit =default-compiler.nix=.                                |                                       |
+|---------------------------------+------------------------------------------------------------------+---------------------------------------|
+| Build a single package          | =./build.sh aeson=                                               |                                       |
+|---------------------------------+------------------------------------------------------------------+---------------------------------------|
+| Set a package pin               | =./pin-package.sh GITHUB-USERNAME HASKELL-ATTRIBUTE [COMMIT-ID]= |                                       |
+|                                 | ..then add a line to =extra-overrides.nix=:                      |                                       |
+|                                 | =HASKELL-ATTRIBUTE = { pin = true; };=                           |                                       |
+|---------------------------------+------------------------------------------------------------------+---------------------------------------|
 
-    : nix-shell --arg pkgs '["aeson" "cabal-install"]'    # Defaults to just 'cabal-install'
+* Setting more overrides
 
-*** Changing Nixpkgs pin
-
-    : ./pin-nixpkgs.sh REVISION [GITHUB-USERNAME]
-
-*** Setting a package pin
-
-    : ./pin-package.sh GITHUB-USERNAME HASKELL-ATTRIBUTE [COMMIT-ID]
-    ..then add a line to =extra-overrides.nix=:
-    : aeson = { pin = true; };
-
-    Other overrides can be conveniently specified there:
+  Haskell derivation overrides other than just =src= attribute, can be
+  conveniently specified in =extra-overrides.nix=:
 
 #+BEGIN_SRC nix
 { pin ? false        :: Bool            # Override the repo/commit from pins/${x}-src.json; see ./pin.sh
@@ -50,8 +56,3 @@
 , doCheck ? true     :: Bool
 }
 #+END_SRC
-
-
-*** Choosing GHC package set
-
-    : nix-shell --argstr compiler ghc863
