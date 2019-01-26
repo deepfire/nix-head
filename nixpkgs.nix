@@ -6,13 +6,14 @@
 ##
 
 let
-  nixpkgsJson  = ./pins/nixpkgs-src.json;
+  nixpkgsJson  = ./pins/nixpkgs.src-json;
   fetchNixpkgs = import ./fetch-nixpkgs.nix;
 in
 { ## 1. Provide pinned Nixpkgs
   nixpkgs     ? fetchNixpkgs nixpkgsJson
   ## 2. Choose a compiler
 , compiler    ? import ./default-compiler.nix
+, trace       ? false
 }:
 let
   overlays = [
@@ -24,15 +25,15 @@ let
         packages = super.haskell.packages // {
           "${compiler}" = super.haskell.packages."${compiler}".override (oldArgs: {
             overrides = sel: sup:
-                      let parent = (oldArgs.overrides or (_: _: {})) sel sup;
-                          patchOvers = super.callPackage self.patches {} sel sup;
-                      in
+                      let lib    = import ./lib.nix self;
+                      in {}
                       ## 1. Preserve existing overrides
-                      parent
-                      ## 2. Apply patches
-                      // patchOvers
-                      ## 3. Extras
-                      // import ./parse-extra-overrides.nix { self = sel; super = sup; pkgs = self; };
+                      // (oldArgs.overrides or (_: _: {})) sel sup
+                      // lib.mergeNestedAttrs2
+                         ## 2. Apply patches
+                         (super.callPackage self.patches {} sel sup)
+                         ## 3. Apply overrides
+                         (lib.computeOverrides ./pins ./extra-overrides.nix trace sel sup);
           });
         };
       };

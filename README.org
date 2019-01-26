@@ -23,22 +23,24 @@
 
 * Quickref
 
-| What                            | How                                                              |                                       |
-|---------------------------------+------------------------------------------------------------------+---------------------------------------|
-| Change Nixpkgs pin              | =./pin-nixpkgs.sh REVISION [GITHUB-USERNAME]=                    | =GITHUB-USERNAME= defaults to =NixOS= |
-|---------------------------------+------------------------------------------------------------------+---------------------------------------|
-| Different packages in the shell | =nix-shell --arg pkgs '["aeson" "cabal-install"]'=           | Defaults to just *cabal-install*.     |
-|                                 | ..or edit *default-packages.nix*.                                |                                       |
-|---------------------------------+------------------------------------------------------------------+---------------------------------------|
-| Select a GHC compiler           | =nix-shell --argstr compiler ghc863=                             | Defaults to =ghcHEAD=.                |
-|                                 | ..or edit *default-compiler.nix*.                                |                                       |
-|---------------------------------+------------------------------------------------------------------+---------------------------------------|
-| Build a single package          | =./build.sh aeson=                                               |                                       |
-|---------------------------------+------------------------------------------------------------------+---------------------------------------|
-| Set a package pin               | =./pin-package.sh GITHUB-USERNAME HASKELL-ATTRIBUTE [COMMIT-ID]= |                                       |
-|                                 | ..then add a line to =extra-overrides.nix=:                      |                                       |
-|                                 | =HASKELL-ATTRIBUTE = { pin = true; };=                           |                                       |
-|---------------------------------+------------------------------------------------------------------+---------------------------------------|
+| What                            | How                                                                                           |                                        |
+|---------------------------------+-----------------------------------------------------------------------------------------------+----------------------------------------|
+| Change Nixpkgs pin              | =./pin-nixpkgs.sh REVISION [GITHUB-USERNAME]=                                                 | =GITHUB-USERNAME= defaults to =NixOS=  |
+|---------------------------------+-----------------------------------------------------------------------------------------------+----------------------------------------|
+| Different packages in the shell | =nix-shell --arg pkgs '["aeson" "cabal-install"]'=                                            | Defaults to just *cabal-install*.      |
+|                                 | ..or edit *default-packages.nix*.                                                             |                                        |
+|---------------------------------+-----------------------------------------------------------------------------------------------+----------------------------------------|
+| Select a GHC compiler           | =nix-shell --argstr compiler ghc863=                                                          | Defaults to =ghcHEAD=.                 |
+|                                 | ..or edit *default-compiler.nix*.                                                             |                                        |
+|---------------------------------+-----------------------------------------------------------------------------------------------+----------------------------------------|
+| Build a single package          | =./build.sh aeson=                                                                            |                                        |
+|---------------------------------+-----------------------------------------------------------------------------------------------+----------------------------------------|
+| Set a package pin               | =./pin-package.sh GITHUB-USERNAME HASKELL-REPO [COMMIT-ID]=                                   | =COMMIT-ID= defaults to repo's =HEAD=. |
+|                                 | ..when =HASKELL-REPO= is same as =HASKELL-ATTR=,                                              |                                        |
+|                                 | otherwise also add a line to =extra-overrides.nix=: =HASKELL-ATTR = { repo = "repo-name"; };= |                                        |
+|---------------------------------+-----------------------------------------------------------------------------------------------+----------------------------------------|
+| Print effective pin specs       | =nix-shell --arg trace true=                                                                  |                                        |
+|---------------------------------+-----------------------------------------------------------------------------------------------+----------------------------------------|
 
 * Setting more overrides
 
@@ -46,7 +48,7 @@
   conveniently specified in =extra-overrides.nix=:
 
 #+BEGIN_SRC nix
-{ pin ? false        :: Bool            # Override the repo/commit from pins/${x}-src.json; see ./pin.sh
+{ pin ? false        :: Bool            # Override the repo/commit from pins/${x}.src-json; see ./pin-package.sh
 , repo ? attr        :: String          # When repository name != attribute name
 , chdir ? null       :: Filepath        # When package's cabal file is in subdir of repository
 , revision ? (!pin)  :: Bool            # Set to false to disable edited cabal file & revision
@@ -59,16 +61,15 @@
 
 * Mass rebuild workflow
 
-  This is a workflow optimised for debugging all problems for the requested
-  package set.
+  This is a workflow optimised for debugging problems of the requested package set:
 
   1. Edit pins (=./pin-package.sh=, and/or =extra-overrides.nix= edits).
 
   2. Either =./build.sh= the affected packages for individual builds (failure logs
      saved under =./logs=), or:
 
-  3. =./all-failures=, which will attempt to build all requested packages, but
-     won't stop on the first failure -- proceeding until nothing else can be
+  3. =./all-failures.sh=, which will attempt to build all requested packages, but
+     won't stop at the first failure -- proceeding until nothing else can be
      built.  This is a batch operation that is intended to give you inputs for
      step #1, so that you can retry efficiently.
 

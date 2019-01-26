@@ -1,5 +1,5 @@
 let
-  nixpkgsJson  = ./pins/nixpkgs-src.json;
+  nixpkgsJson  = ./pins/nixpkgs.src-json;
   fetchNixpkgs = import ./fetch-nixpkgs.nix;
 in
 { ## 1. Provide pinned Nixpkgs
@@ -9,10 +9,11 @@ in
 , withHoogle  ? false
   ## 3. Choose extra packages
 , pkgs        ? import ./default-packages.nix
+, trace       ? false
 }:
 let
-  nixpkgs' = import ./nixpkgs.nix { inherit compiler nixpkgs; }; # Patched Nixpkgs with overlays.
-  ghc      = nixpkgs'.haskell.packages."${compiler}";            # :: nixpkgs/pkgs/development/haskell-modules/make-package-set.nix
+  nixpkgs' = import ./nixpkgs.nix { inherit compiler nixpkgs trace; }; # Patched Nixpkgs with overlays.
+  ghc      = nixpkgs'.haskell.packages."${compiler}";                  # :: nixpkgs/pkgs/development/haskell-modules/make-package-set.nix
 in with ghc;
   shellFor {
     packages    = p: [];
