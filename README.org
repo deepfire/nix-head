@@ -84,10 +84,15 @@
   2. Either =./build.sh= the affected packages for individual builds (failure logs
      saved under =./logs=), or:
 
-  3. =./all-failures.sh=, which will attempt to build all requested packages, but
+  3. =./all-failures-raw.sh=, which will attempt to build all requested packages, but
      won't stop at the first failure -- proceeding until nothing else can be
      built.  This is a batch operation that is intended to give you inputs for
      step #1, so that you can retry efficiently.
+
+     Alternatively, =./all-failures.sh= and =./all-failures-dialog.sh= will
+     present the list of failed derivation builds in a more palatable manner
+     (stdout and an interactive dialog interface for log viewing,
+     correspondingly).
 
 * Leveraging as package set supplier for your program
 
