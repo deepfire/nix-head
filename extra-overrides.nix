@@ -12,7 +12,12 @@
 # }
 
 self: {
-  # cabal-install        = { pin = true; repo = "cabal"; jailbreak = true; };
-  # tar                  = { jailbreak = true; };
-  # test-framework       = { jailbreak = true; };
+  cabal-install        = { pin = true; jailbreak = true; repo = "cabal"; chdir = "cabal-install"; scope = self: super: { Cabal = null; }; };
+  exceptions           =             { jailbreak = true; };
+  hackage-security     =             { jailbreak = true; doHaddock = false; };
+  jailbreak-cabal      = { pin = true; };
+  primitive            = { pin = true; jailbreak = true; };
+  tagged               = { pin = true; };
+  tar                  = { pin = true; };
+  test-framework       =             { jailbreak = true; };
 }
