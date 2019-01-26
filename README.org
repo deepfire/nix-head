@@ -1,9 +1,25 @@
 * What?
 
-1. =nix-shell= to =ghcHEAD= (or any other compiler of choice) with:
-2. https://github.com/hvr/head.hackage patches applied
-3. Custom package pins & overrides
-4. Nixpkgs pinning
+  1. =nix-shell= to =ghcHEAD= (or any other compiler of choice) with:
+  2. https://github.com/hvr/head.hackage patches applied
+  3. Custom package pins & other overrides
+  4. Nixpkgs pinning
+
+  In essence, it gives you Nixpkgs for a composition of =head.hackage='s patches
+  and local overrides (both declarative and FS-stateful), for a given compiler,
+  all in scope of given Nixpkgs:
+
+  *nix-head* :: *HeadHackage* -> *OverSpecs FS* -> *OverSpecs Decl* -> *GHCVer* -> *Either Nixpkgs NixpkgsCommit* -> *Nixpkgs*
+
+  ..where:
+
+  - OverSpecs Decl :: Declarative override specification in =extra-overrides.nix=,
+                      that's slightly more convenient than the default syntax.
+                      Only covers common override cases, but easily extended.
+
+  - OverSpecs FS :: Same as above, but specified by separate files in the =./pins=
+                    folder, which is essentially treated as a stateful DB.
+                    =pin-package.sh= is used to set per-repo =src= overrides (aka /pins/).
 
 * Quick setup (Nix assumed installed)
 
@@ -23,26 +39,26 @@
 
 * Quickref
 
-| What                            | How                                                                                           |                                        |
-|---------------------------------+-----------------------------------------------------------------------------------------------+----------------------------------------|
-| Change Nixpkgs pin              | =./pin-nixpkgs.sh REVISION [GITHUB-USERNAME]=                                                 | =GITHUB-USERNAME= defaults to =NixOS=  |
-|---------------------------------+-----------------------------------------------------------------------------------------------+----------------------------------------|
-| Different packages in the shell | =nix-shell --arg pkgs '["aeson" "cabal-install"]'=                                            | Defaults to just *cabal-install*.      |
-|                                 | ..or edit *default-packages.nix*.                                                             |                                        |
-|---------------------------------+-----------------------------------------------------------------------------------------------+----------------------------------------|
-| Select a GHC compiler           | =nix-shell --argstr compiler ghc863=                                                          | Defaults to =ghcHEAD=.                 |
-|                                 | ..or edit *default-compiler.nix*.                                                             |                                        |
-|---------------------------------+-----------------------------------------------------------------------------------------------+----------------------------------------|
-| Build a single package          | =./build.sh aeson=                                                                            |                                        |
-|---------------------------------+-----------------------------------------------------------------------------------------------+----------------------------------------|
-| Set a package pin               | =./pin-package.sh GITHUB-USERNAME HASKELL-REPO [COMMIT-ID]=                                   | =COMMIT-ID= defaults to repo's =HEAD=. |
-|                                 | ..when =HASKELL-REPO= is same as =HASKELL-ATTR=,                                              |                                        |
-|                                 | otherwise also add a line to =extra-overrides.nix=: =HASKELL-ATTR = { repo = "repo-name"; };= |                                        |
-|---------------------------------+-----------------------------------------------------------------------------------------------+----------------------------------------|
-| Print effective pin specs       | =nix-shell --arg trace true=                                                                  |                                        |
-|---------------------------------+-----------------------------------------------------------------------------------------------+----------------------------------------|
+| What                                                         | How                                                                                                  |                                        |
+|--------------------------------------------------------------+------------------------------------------------------------------------------------------------------+----------------------------------------|
+| Change Nixpkgs pin                                           | =./pin-nixpkgs.sh REVISION [GITHUB-USERNAME]=                                                        | =GITHUB-USERNAME= defaults to =NixOS=  |
+|--------------------------------------------------------------+------------------------------------------------------------------------------------------------------+----------------------------------------|
+| Select a GHC                                                 | =nix-shell --argstr compiler ghc863=                                                                 | Defaults to =ghcHEAD=.                 |
+|                                                              | ..or edit *default-compiler.nix*.                                                                    |                                        |
+|--------------------------------------------------------------+------------------------------------------------------------------------------------------------------+----------------------------------------|
+| Set a package pin                                            | =./pin-package.sh GITHUB-USERNAME HASKELL-REPO [COMMIT-ID]=                                          | =COMMIT-ID= defaults to repo's =HEAD=. |
+|                                                              | ..when =HASKELL-REPO= is same as =HASKELL-ATTR=, otherwise also add a line to =extra-overrides.nix=: |                                        |
+|                                                              | =HASKELL-ATTR = { repo = "repo-name"; };=                                                            |                                        |
+|--------------------------------------------------------------+------------------------------------------------------------------------------------------------------+----------------------------------------|
+| Build single pkg                                             | =./build.sh aeson=                                                                                   |                                        |
+|--------------------------------------------------------------+------------------------------------------------------------------------------------------------------+----------------------------------------|
+| Print local overrides effective for *./default-packages.nix* | =nix-shell --arg trace true=                                                                         |                                        |
+|--------------------------------------------------------------+------------------------------------------------------------------------------------------------------+----------------------------------------|
+| Different packages in the shell                              | =nix-shell --arg pkgs '["aeson" "cabal-install"]'=                                                   | Defaults to just *cabal-install*.      |
+|                                                              | ..or edit *default-packages.nix*.                                                                    |                                        |
+|--------------------------------------------------------------+------------------------------------------------------------------------------------------------------+----------------------------------------|
 
-* Setting more overrides
+* Setting overrides using =OverSpecs=
 
   Haskell derivation overrides other than just =src= attribute, can be
   conveniently specified in =extra-overrides.nix=:
@@ -63,7 +79,7 @@
 
   This is a workflow optimised for debugging problems of the requested package set:
 
-  1. Edit pins (=./pin-package.sh=, and/or =extra-overrides.nix= edits).
+  1. Edit overrides (=./pin-package.sh=, and/or =extra-overrides.nix= edits).
 
   2. Either =./build.sh= the affected packages for individual builds (failure logs
      saved under =./logs=), or:
