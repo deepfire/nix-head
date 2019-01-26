@@ -9,8 +9,9 @@ let
          , jailbreak ? false
          , doHaddock ? true
          , doCheck ? true
+         , scope ? null
          }:
-              overrideCabal (super."${attr}")
+         let result = overrideCabal (super."${attr}")
   (drv: {}
     // optionalAttrs pin              {
         src             = pkgs.fetchgit (removeAttrs (fromJSON (readFile (./pins + "/${repo}.src.json"))) ["date"]);
@@ -19,8 +20,10 @@ let
         editedCabalFile = null;
         revision        = null; }
     // optionalAttrs jailbreak        { jailbreak   = true; }
-    // optionalAttrs doHaddock        { doHaddock   = false; }
+    // optionalAttrs (!doHaddock)     { doHaddock   = false; }
     // optionalAttrs (!doCheck)       { doCheck     = false; }
     // optionalAttrs (patch != null)  { patches     = [(pkgs.fetchpatch patch)]; }
     );
+    in if scope == null then result
+       else result.overrideScope scope;
 in mapAttrs over (import ./extra-overrides.nix self)
