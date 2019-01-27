@@ -10,10 +10,12 @@ let
   fetchNixpkgs = import ./fetch-nixpkgs.nix;
 in
 { ## 1. Provide pinned Nixpkgs
-  nixpkgs     ? fetchNixpkgs nixpkgsJson
+  nixpkgs        ? fetchNixpkgs nixpkgsJson
   ## 2. Choose a compiler
-, compiler    ? import ./default-compiler.nix
-, trace       ? false
+, compiler       ? import ./default-compiler.nix
+, trace          ? false
+, tracePatches   ? trace
+, traceOverrides ? trace
 }:
 let
   overlays = [
@@ -31,9 +33,9 @@ let
                       // (oldArgs.overrides or (_: _: {})) sel sup
                       // lib.mergeNestedAttrs2
                          ## 2. Apply patches
-                         (super.callPackage self.patches {} sel sup)
+                         (lib.maybeTraceAttrs tracePatches (super.callPackage self.patches {} sel sup))
                          ## 3. Apply overrides
-                         (lib.computeOverrides ./pins ./extra-overrides.nix trace sel sup);
+                         (lib.computeOverrides ./pins ./extra-overrides.nix traceOverrides sel sup);
           });
         };
       };

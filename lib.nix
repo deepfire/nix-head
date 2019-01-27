@@ -1,7 +1,7 @@
 pkgs:
 with pkgs.haskell.lib; with pkgs.lib; with builtins;
 let
-  # traceAttrsN        :: Map a b -> Map a b
+  # traceAttrsN        :: Map a b -> Map a b -- Given an attrset, instrument it so its elements self-trace on use.
   traceAttrsN           = depth: attrs: mapAttrs (k: v: traceSeqN depth { "${k}" = v; } v) attrs;
   # maybeTraceAttrs    :: Bool -> Map a b -> Map a b
   maybeTraceAttrs       = bool: xs: if bool then traceAttrsN 5 xs else xs;
@@ -83,5 +83,5 @@ in {}
 // pkgs.haskell.lib
 // builtins
 // {
-  inherit over readPinSpecsFromDir printPinSpecs computeOverrides printAllPinSpecs mergeNestedAttrs2;
+  inherit over readPinSpecsFromDir printPinSpecs computeOverrides printAllPinSpecs mergeNestedAttrs2 maybeTraceAttrs;
 }
