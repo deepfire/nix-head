@@ -8,9 +8,10 @@ test -n "$attr" || { echo "USAGE: ${basename} ATTR [COMPILER]" >&2; exit 1; }
 
 compiler=${2:-$(cat "${dirname}/default-compiler.nix")}
 
-LOG=${dirname}/logs/"$attr".log
+LOG="${dirname}"/logs/"$attr".log
+mkdir -p "${dirname}"/logs/
 
-NIX_ARGS="-A pkgs.haskell.packages."${compiler}"."${attr}" '${dirname}/nixpkgs.nix'"
+NIX_ARGS="-A pkgs.haskell.packages."${compiler}"."${attr}" ${dirname}/nixpkgs.nix"
 NIX_DRV=$(nix-instantiate ${NIX_ARGS} 2>$LOG || true)
 if ! test -n "$NIX_DRV"
 then
