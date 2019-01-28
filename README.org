@@ -1,6 +1,9 @@
 * What?
 
-  1. =nix-shell= to =ghcHEAD= (or any other compiler of choice) with:
+  A workbench intended for working with broken packages (which happens with
+  =ghcHEAD=), that provides:
+
+  1. Nixpkgs (or just =nix-shell=) with =ghcHEAD= (or any other compiler of choice) with:
   2. https://github.com/hvr/head.hackage patches applied
   3. Custom package pins & other overrides
   4. Nixpkgs pinning
@@ -61,7 +64,7 @@
 * Setting overrides using =OverSpecs=
 
   Haskell derivation overrides other than just =src= attribute, can be
-  conveniently specified in =extra-overrides.nix=:
+  conveniently specified in a declarative way via =extra-overrides.nix=:
 
 #+BEGIN_SRC nix
 { pin ? false        :: Bool            # Override the repo/commit from pins/${x}.src-json; see ./pin-package.sh
@@ -74,6 +77,10 @@
 , doCheck ? true     :: Bool
 }
 #+END_SRC
+
+  Note, that this declarative specification takes precedence over the FS-based
+  specs, so, as an example, if you have a =src-json= pin in =pins=, you can
+  disable it in the declarative spec by specifying =pin = false=.
 
 * Mass rebuild workflow
 
