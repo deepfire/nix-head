@@ -19,16 +19,17 @@ in
 }:
 let
   overlays = [
-    (self: super: {
-      patches = super.callPackage
-        ./head.hackage/scripts/overrides.nix
-        { patches = ./head.hackage/patches; };
+    (self: super:
+    let lib     = import ./lib.nix self;
+        patches = super.callPackage ./head.hackage/scripts/overrides.nix
+                        { patches = ./head.hackage/patches; };
+    in {
+      patches = builtins.trace "patches.nix: ${patches.outPath}" patches;
       haskell = super.haskell // {
         packages = super.haskell.packages // {
           "${compiler}" =
-            let lib = import ./lib.nix self;
             ## Preserve existing overrides
-            in super.haskell.packages."${compiler}".override (oldArgs: {
+            super.haskell.packages."${compiler}".override (oldArgs: {
               overrides = super.lib.composeExtensions
                           (sel: sup: lib.computeOverrides ./pins ./extra-overrides.nix traceOverrides sel sup)
                           (sel: sup: lib.maybeTraceAttrs tracePatches (self.callPackage self.patches {} sel sup));
