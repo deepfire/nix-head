@@ -25,18 +25,14 @@ let
         { patches = ./head.hackage/patches; };
       haskell = super.haskell // {
         packages = super.haskell.packages // {
-          "${compiler}" = super.haskell.packages."${compiler}".override (oldArgs: {
-            overrides = sel: sup:
-                      let lib    = import ./lib.nix self;
-                      in {}
-                      ## 1. Preserve existing overrides
-                      // (oldArgs.overrides or (_: _: {})) sel sup
-                      // lib.mergeNestedAttrs2
-                         ## 2. Apply patches
-                         (lib.maybeTraceAttrs tracePatches (super.callPackage self.patches {} sel sup))
-                         ## 3. Apply overrides
-                         (lib.computeOverrides ./pins ./extra-overrides.nix traceOverrides sel sup);
-          });
+          "${compiler}" =
+            let lib = import ./lib.nix self;
+            ## Preserve existing overrides
+            in super.haskell.packages."${compiler}".override (oldArgs: {
+              overrides = super.lib.composeExtensions
+                          (sel: sup: lib.computeOverrides ./pins ./extra-overrides.nix traceOverrides sel sup)
+                          (sel: sup: lib.maybeTraceAttrs tracePatches (self.callPackage self.patches {} sel sup));
+            });
         };
       };
     })
