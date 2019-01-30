@@ -3,5 +3,6 @@ script:   nix-build shell.nix
 sudo:     true
 
 cache:
+  timeout: 900
   directories:
     - /nix

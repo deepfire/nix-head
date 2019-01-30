@@ -52,9 +52,6 @@ let
          , scope ? null
          , headPatch ? true
          , headCabal ? true
-         # , configureFlags ? null
-         # , extraLibraryDepends ? null
-         # , extraTestDepends ? null
          , extAttrs ? {}
          , extLists ? {}
          , extStrs  ? {}
@@ -71,12 +68,6 @@ let
     // optionalAttrs (!doHaddock)     { doHaddock   = false; }
     // optionalAttrs (!doCheck)       { doCheck     = false; }
     // optionalAttrs (patch != null)  { patches     = [(pkgs.fetchpatch patch)]; }
-    # // optionalAttrs (configureFlags != null)
-    #                                   { configureFlags = (drv.configureFlags or []) ++ configureFlags; }
-    # // optionalAttrs (extraLibraryDepends != null)
-    #                                   { libraryHaskellDepends = (drv.libraryHaskellDepends or []) ++ extraLibraryDepends; }
-    # // optionalAttrs (extraTestDepends != null)
-    #                                   { testHaskellDepends    = (drv.testHaskellDepends    or []) ++ extraTestDepends; }
     // (mapAttrs (k: v: (drv."${k}" or {}) // v) extAttrs)
     // (mapAttrs (k: v: (drv."${k}" or []) ++ v) extLists)
     // (mapAttrs (k: f: f (drv."${k}" or ""))    (maybeTraceAttrs true extStrs))
