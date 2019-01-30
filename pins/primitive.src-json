@@ -1,7 +1,0 @@
-{
-  "url": "https://github.com/haskell/primitive",
-  "rev": "e2310b7a4afd9ee5f340e5f842d7d25243950271",
-  "date": "2019-01-05T15:26:56+00:00",
-  "sha256": "0fc8ihdr4mnm3r5yzlf1r2z0ji44wv9inis8c639ab4lqjfn36hj",
-  "fetchSubmodules": false
-}

@@ -47,7 +47,7 @@ lib: self: super: with lib; with self; {
   lambdacube-ir        = { jailbreak = true; chdir = "lambdacube-ir.haskell"; };
   lens                 = { jailbreak = true; };
   microlens-th         = { jailbreak = true; };
-  primitive            = { jailbreak = true; pin = false; };
+  primitive            = { jailbreak = true; };
   pretty-show          =                   { doHaddock = false; };
   reflex               = { jailbreak = true;                    scope = self: super: { haskell-src-exts = dontHaddock super.haskell-src-exts_1_21_0; };
                            extLists  = { libraryHaskellDepends =
