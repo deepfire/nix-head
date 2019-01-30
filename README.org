@@ -49,17 +49,24 @@
 | Select a GHC                          | =nix-shell --argstr compiler ghc863=                                                                 | Defaults to =ghcHEAD=.                 |
 |                                       | ..or edit *default-compiler.nix*.                                                                    |                                        |
 |---------------------------------------+------------------------------------------------------------------------------------------------------+----------------------------------------|
+| Set =head.hackage= commit used        | =./pin-head-hackage COMMIT-ID [GITHUB-USERNAME]=                                                     |                                        |
+|---------------------------------------+------------------------------------------------------------------------------------------------------+----------------------------------------|
 | Set a package pin                     | =./pin-package.sh GITHUB-USERNAME HASKELL-REPO [COMMIT-ID]=                                          | =COMMIT-ID= defaults to repo's =HEAD=. |
 |                                       | ..when =HASKELL-REPO= is same as =HASKELL-ATTR=, otherwise also add a line to =extra-overrides.nix=: |                                        |
 |                                       | =HASKELL-ATTR = { repo = "repo-name"; };=                                                            |                                        |
 |---------------------------------------+------------------------------------------------------------------------------------------------------+----------------------------------------|
 | Build single pkg                      | =./build.sh aeson=                                                                                   |                                        |
 |---------------------------------------+------------------------------------------------------------------------------------------------------+----------------------------------------|
+| Enter shell for a pkg                 | =./shell-for.sh aeson=                                                                               |                                        |
+|---------------------------------------+------------------------------------------------------------------------------------------------------+----------------------------------------|
 | Print effective overrides and patches | =./print-overrides [--patches-only] [--overrides-only]=                                              |                                        |
 |---------------------------------------+------------------------------------------------------------------------------------------------------+----------------------------------------|
 | Different packages in the shell       | =nix-shell --arg pkgs '["aeson" "cabal-install"]'=                                                   | Defaults to just *cabal-install*.      |
 |                                       | ..or edit *default-packages.nix*.                                                                    |                                        |
 |---------------------------------------+------------------------------------------------------------------------------------------------------+----------------------------------------|
+
+Note, that most of the bash scripts (like =shell-for.sh=) are
+position-independent, so can be invoked from arbitrary =$PWD=.
 
 * Setting overrides using =OverSpecs=
 
