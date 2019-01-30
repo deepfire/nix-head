@@ -1,7 +1,11 @@
 #!/bin/sh
 
-pkg=$1; shift
-nhroot=$(dirname $0 | xargs realpath)
+pkg=${1:-$(basename $(pwd))}
+case $1 in
+        --* | "") true;;
+        *) shift;;
+esac
+nhroot=$(realpath $0 | xargs dirname)
 
 echo "Entering shell for: ${pkg}"
 set -x
