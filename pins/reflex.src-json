@@ -1,7 +1,7 @@
 {
   "url": "https://github.com/deepfire/reflex",
-  "rev": "015a14db3144a82b9064a82ec4b33723a93342bc",
-  "date": "2019-01-30T13:41:53+03:00",
-  "sha256": "18qzm83nv2f5y441c9qi74dkamwa50k5vcyzqx73l61zlk1nvj8i",
+  "rev": "c47a26cf39a79ae7b35caace685311f90e7ccd4a",
+  "date": "2019-01-30T14:37:22+03:00",
+  "sha256": "1yjiwr892xqgy4sri380zgg5wc0w45021qsj15dd5zqpz0ygsz5a",
   "fetchSubmodules": false
 }
