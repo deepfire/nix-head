@@ -42,26 +42,44 @@ let
   over = super:
          attr:
          { pin ? false
+         , just ? null
          , repo ? attr, chdir ? null
-         , revision ? (!pin)
+         , dontRevise ? pin
          , patches ? [], patch ? null
          , jailbreak ? false
          , doHaddock ? true
          , doCheck ? true
          , scope ? null
+         , headPatch ? true
+         , headCabal ? true
+         # , configureFlags ? null
+         # , extraLibraryDepends ? null
+         # , extraTestDepends ? null
+         , extAttrs ? {}
+         , extLists ? {}
+         , extStrs  ? {}
          }:
-         let result = overrideCabal (super."${attr}")
+         let result = overrideCabal (if just == null then super."${attr}" else just)
   (drv: {}
     // optionalAttrs pin              {
         src             = interpSrcJson ./pins repo;
         prePatch        = interpChdir (chdir != null) chdir; }
-    // optionalAttrs (!revision)      {
+    // optionalAttrs dontRevise       {
         editedCabalFile = null;
         revision        = null; }
     // optionalAttrs jailbreak        { jailbreak   = true; }
     // optionalAttrs (!doHaddock)     { doHaddock   = false; }
     // optionalAttrs (!doCheck)       { doCheck     = false; }
     // optionalAttrs (patch != null)  { patches     = [(pkgs.fetchpatch patch)]; }
+    # // optionalAttrs (configureFlags != null)
+    #                                   { configureFlags = (drv.configureFlags or []) ++ configureFlags; }
+    # // optionalAttrs (extraLibraryDepends != null)
+    #                                   { libraryHaskellDepends = (drv.libraryHaskellDepends or []) ++ extraLibraryDepends; }
+    # // optionalAttrs (extraTestDepends != null)
+    #                                   { testHaskellDepends    = (drv.testHaskellDepends    or []) ++ extraTestDepends; }
+    // (mapAttrs (k: v: (drv."${k}" or {}) // v) extAttrs)
+    // (mapAttrs (k: v: (drv."${k}" or []) ++ v) extLists)
+    // (mapAttrs (k: f: f (drv."${k}" or ""))    (maybeTraceAttrs true extStrs))
     );
     in if scope == null then result
        else result.overrideScope scope;
@@ -70,18 +88,20 @@ let
     optionalAttrs ((pins.repo or attr) != attr
                  && attrHasPin result pins.repo "pin")
     { pin = true; };
-  allPinSpecs = pinsDir: declPinsFile: tracep: self:
+  allPinSpecs = pinsDir: declPinsFile: tracep: self: super:
                 let result =
                   (mergeNestedAttrs2
                    (readPinSpecsFromDir result pinsDir tracep)
-                   (mapAttrs (patchAttrRepoPin result) (import declPinsFile self)));
+                   (mapAttrs (patchAttrRepoPin result) (import declPinsFile pkgs.haskell.lib self super)));
                 in result;
-  computeOverrides = pinsDir: declPinsFile: tracep: self: super: mapAttrs (over super) (maybeTraceAttrs tracep (allPinSpecs pinsDir declPinsFile tracep self));
-  printAllPinSpecs = pinsDir: declPinsFile: self:                printPinSpecs (allPinSpecs pinsDir declPinsFile self);
+  computeOverrides = pinsDir: declPinsFile: tracep: self: super: mapAttrs (over super) (maybeTraceAttrs tracep (allPinSpecs pinsDir declPinsFile tracep self super));
+  printAllPinSpecs = pinsDir: declPinsFile: self: super:         printPinSpecs (allPinSpecs pinsDir declPinsFile self super);
+  suppressedPatches = specs: filterAttrs (_: v: v ? headPatch && !v.headPatch) specs;
+  suppressedCabals  = specs: filterAttrs (_: v: v ? headCabal && !v.headCabal) specs;
 in {}
 // pkgs.lib
 // pkgs.haskell.lib
 // builtins
 // {
-  inherit over readPinSpecsFromDir printPinSpecs computeOverrides printAllPinSpecs mergeNestedAttrs2 maybeTraceAttrs;
+  inherit over readPinSpecsFromDir printPinSpecs computeOverrides printAllPinSpecs mergeNestedAttrs2 maybeTraceAttrs suppressedPatches suppressedCabals;
 }

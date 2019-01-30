@@ -28,11 +28,14 @@ let
       haskell = super.haskell // {
         packages = super.haskell.packages // {
           "${compiler}" =
-            ## Preserve existing overrides
             super.haskell.packages."${compiler}".override (oldArgs: {
-              overrides = super.lib.composeExtensions
+              overrides = let overSpecs = import ./extra-overrides.nix super.haskell.lib self super;
+                              suppressedCabals  = lib.suppressedCabals  overSpecs;
+                              suppressedPatches = lib.suppressedPatches overSpecs;
+                          in
+                          super.lib.composeExtensions
                           (sel: sup: lib.computeOverrides ./pins ./extra-overrides.nix traceOverrides sel sup)
-                          (sel: sup: lib.maybeTraceAttrs tracePatches (self.callPackage self.patches {} sel sup));
+                          (sel: sup: lib.maybeTraceAttrs tracePatches (self.callPackage self.patches { inherit suppressedCabals suppressedPatches; } sel sup));
             });
         };
       };
