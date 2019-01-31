@@ -6,7 +6,6 @@ cwdRepo="$(basename $(pwd))"
 
 user=$1
 test -n "${user}" || { echo "USAGE: $(basename $0) COMMIT-ID [GITHUB-USERNAME]" >&2; exit 1; }
-shift
 
 repo=${2:-${cwdRepo}}
 rev=${3:-$(if test "${cwdRepo}" = "${repo}"; then git rev-parse HEAD; fi)}
