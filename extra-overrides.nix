@@ -49,7 +49,7 @@ lib: self: super: with lib; with self; {
   microlens-th         = { jailbreak = true; };
   primitive            = { jailbreak = true; };
   pretty-show          =                   { doHaddock = false; };
-  reflex               = { jailbreak = true;                    scope = self: super: { haskell-src-exts = dontHaddock super.haskell-src-exts_1_21_0; };
+  reflex               = { jailbreak = true; doCheck   = false; scope = self: super: { haskell-src-exts = dontHaddock super.haskell-src-exts_1_21_0; };
                            extLists  = { libraryHaskellDepends =
                                            [ data-default filemanip hlint lens monad-control monoidal-containers prim-uniq reflection split unbounded-delays ]; }; };
   singletons           = { jailbreak = true; headPatch = false; };

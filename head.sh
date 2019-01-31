@@ -9,7 +9,7 @@ ${NIX_HEAD_BASENAME} CMD ARGS..
 Commands:
 
 EOF
-        find . -maxdepth 1 -name '[a-z]*.sh' -perm -111 | sed 's,./\(.*\)\.sh,\1,' | grep -v '^head$' | sort | { read cmd; while test -n "${cmd}"; do
+        find ${NIX_HEAD_ROOT} -maxdepth 1 -name '[a-z]*.sh' -perm -111 | sed s,${NIX_HEAD_ROOT}/'\(.*\)\.sh,\1,' | grep -v '^head$' | sort | { read cmd; while test -n "${cmd}"; do
         printf " %20s $(grep '## Usage: ' "${NIX_HEAD_ROOT}"/${cmd}.sh | cut -c 10-)\n" "${cmd}"
         read cmd; done; } >&2; exit 1
 }
