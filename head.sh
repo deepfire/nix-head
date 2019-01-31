@@ -34,7 +34,7 @@ case "${cmd}" in
      pin-head-hackage | pin-head     | ph  ) . "${NIX_HEAD_ROOT}"/pin-head-hackage.sh "$@";;
           pin-nixpkgs |                pn  ) . "${NIX_HEAD_ROOT}"/pin-nixpkgs.sh "$@";;
           pin-package | pin          | p   ) . "${NIX_HEAD_ROOT}"/pin-package.sh "$@";;
-      print-overrides | print              ) . "${NIX_HEAD_ROOT}"/print-overrides.sh "$@";;
+      print-overrides | print | show       ) . "${NIX_HEAD_ROOT}"/print-overrides.sh "$@";;
             shell-for | shell        | s   ) . "${NIX_HEAD_ROOT}"/shell-for.sh "$@";;
   update-head-hackage | up-head            ) . "${NIX_HEAD_ROOT}"/update-head-hackage.sh "$@";;
        watch-failures | watch        | w   ) . "${NIX_HEAD_ROOT}"/watch-failures.sh "$@";;

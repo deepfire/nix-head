@@ -10,4 +10,4 @@ case $1 in
      * ) echo "ERROR: unknown arg: $1" >&2; exit 1;;
 esac
 
-nix-instantiate shell.nix --arg tracePatches ${tracePatches} --arg traceOverrides ${traceOverrides}
+nix-instantiate shell.nix --quiet --arg tracePatches ${tracePatches} --arg traceOverrides ${traceOverrides} 2>&1 | sort | uniq
