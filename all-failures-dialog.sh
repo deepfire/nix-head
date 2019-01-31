@@ -1,4 +1,5 @@
 #!/bin/sh
+## Usage:                  `all-failures` with a dialog UI for failed drvs
 
 nhroot=$(dirname $0)
 nix-shell -p dialog --command \

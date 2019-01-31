@@ -1,10 +1,12 @@
 #!/bin/sh
+## Usage: ATTR [--verbose] Show basic properties of a Haskell attribute
 
 basename=$(basename $0)
 nhroot="$(realpath $0 | xargs dirname)"
 
-attr="$1"; shift
+attr="$1"
 test -n "$attr" || { echo "USAGE: ${basename} ATTR" >&2; exit 1; }
+shift
 
 verbose=""
 while test -n "$1"

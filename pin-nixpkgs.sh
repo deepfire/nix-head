@@ -1,4 +1,5 @@
 #!/bin/sh
+## Usage: REV [GHUSER]     Set Nixpkgs commit from a specifid Github user (NixOS)
 
 rev=$1
 upstream=${2:-NixOS}

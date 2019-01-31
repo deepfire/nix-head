@@ -1,10 +1,8 @@
 #!/bin/sh
+## Usage: REV [GHUSER]     Set head.hackage commit from a specifid Github user,\n\t\t\t\t\t  which defaults to $USER
 
 rev=$1
-test -n "${rev}" || {
-        echo "USAGE: $(basename $0) COMMIT-ID [GITHUB-USERNAME]" >&2
-        exit 1
-}
+test -n "${rev}" || { echo "USAGE: $(basename $0) COMMIT-ID [GITHUB-USERNAME]" >&2; exit 1; }
 
 upstream=${2:-hvr}
 repo="head.hackage"

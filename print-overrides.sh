@@ -1,4 +1,5 @@
 #!/bin/sh
+## Usage: [--patches-only] [--overrides-only]\n\t\t\t\t\tShow all overrides effective for $PWD/shell.nix
 
 tracePatches=true
 traceOverrides=true

@@ -1,4 +1,5 @@
 #!/bin/sh
+## Usage: [ATTR] ARGS..    'nix-shell' for the specified attribute (from $PWD),\n\t\t\t\t\t  with any ARGS passed to nix-shell
 
 cwdAttr="$(basename $(pwd))"
 attr=${1:-${cwdAttr}}

@@ -1,10 +1,12 @@
 #!/bin/sh
+## Usage: ATTR ARGS..      Build an attribute; ARGS passed to nix-instantiate
 
 basename=$(basename $0)
 nhroot="$(realpath $0 | xargs dirname)"
 
-attr="$1"; shift
+attr="$1"
 test -n "$attr" || { echo "USAGE: ${basename} ATTR [COMPILER]" >&2; exit 1; }
+shift
 
 compiler=$(cat "${nhroot}/default-compiler.nix")
 

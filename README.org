@@ -40,11 +40,15 @@
 
   ..which will give you a shell with =ghcHEAD= and =cabal-install= (by default).
 
+  The dispatching super-script shows available commands:
+
+  : ./head.sh --help
+
 * Quickref
 
 | What                                  | How                                                                                                  |                                        |
 |---------------------------------------+------------------------------------------------------------------------------------------------------+----------------------------------------|
-| Change Nixpkgs pin                    | =./pin-nixpkgs.sh REVISION [GITHUB-USERNAME]=                                                        | =GITHUB-USERNAME= defaults to =NixOS=  |
+| Change Nixpkgs pin                    | =./pin-nixpkgs.sh REVISION [GITHUB-USERNAME]= ..or.. =./head.sh pin-nixpkgs REV [USER]=              | =GITHUB-USERNAME= defaults to =NixOS=  |
 |---------------------------------------+------------------------------------------------------------------------------------------------------+----------------------------------------|
 | Select a GHC                          | =nix-shell --argstr compiler ghc863=                                                                 | Defaults to =ghcHEAD=.                 |
 |                                       | ..or edit *default-compiler.nix*.                                                                    |                                        |
@@ -55,14 +59,16 @@
 |                                       | ..when =HASKELL-REPO= is same as =HASKELL-ATTR=, otherwise also add a line to =extra-overrides.nix=: |                                        |
 |                                       | =HASKELL-ATTR = { repo = "repo-name"; };=                                                            |                                        |
 |---------------------------------------+------------------------------------------------------------------------------------------------------+----------------------------------------|
-| Build single pkg                      | =./build.sh aeson=                                                                                   |                                        |
+| Build single pkg                      | =./build.sh aeson= ..or.. =./head.sh build aeson=                                                    |                                        |
 |---------------------------------------+------------------------------------------------------------------------------------------------------+----------------------------------------|
-| Enter shell for a pkg                 | =./shell-for.sh aeson=                                                                               |                                        |
+| Enter shell for a pkg                 | =./shell-for.sh aeson= ..or.. =./head.sh shell-for aeson=                                            |                                        |
 |---------------------------------------+------------------------------------------------------------------------------------------------------+----------------------------------------|
 | Print effective overrides and patches | =./print-overrides [--patches-only] [--overrides-only]=                                              |                                        |
 |---------------------------------------+------------------------------------------------------------------------------------------------------+----------------------------------------|
 | Different packages in the shell       | =nix-shell --arg pkgs '["aeson" "cabal-install"]'=                                                   | Defaults to just *cabal-install*.      |
 |                                       | ..or edit *default-packages.nix*.                                                                    |                                        |
+|---------------------------------------+------------------------------------------------------------------------------------------------------+----------------------------------------|
+| The dispatch umbrella script          | =./head.sh --help=                                                                                   | =head.sh= is intended for aliasing.    |
 |---------------------------------------+------------------------------------------------------------------------------------------------------+----------------------------------------|
 
 Note, that most of the bash scripts (like =shell-for.sh=) are
@@ -100,7 +106,7 @@ position-independent, so can be invoked from arbitrary =$PWD=.
 
   This is a workflow optimised for debugging problems of the requested package set:
 
-  1. Edit overrides (=./pin-package.sh=, and/or =extra-overrides.nix= edits).
+  1. Edit overrides (using =./pin-package.sh=, and/or =extra-overrides.nix= edits).
 
   2. Either =./build.sh= the affected packages for individual builds (failure logs
      saved under =./logs=), or:
