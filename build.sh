@@ -1,17 +1,17 @@
 #!/bin/sh
 
 basename=$(basename $0)
-dirname="$(dirname $0)"
+nhroot="$(realpath $0 | xargs dirname)"
 
 attr="$1"; shift
 test -n "$attr" || { echo "USAGE: ${basename} ATTR [COMPILER]" >&2; exit 1; }
 
-compiler=$(cat "${dirname}/default-compiler.nix")
+compiler=$(cat "${nhroot}/default-compiler.nix")
 
-LOG="${dirname}"/logs/"$attr".log
-mkdir -p "${dirname}"/logs/
+LOG="${nhroot}"/logs/"$attr".log
+mkdir -p "${nhroot}"/logs/
 
-NIX_ARGS="-A pkgs.haskell.packages."${compiler}"."${attr}" ${dirname}/nixpkgs.nix"
+NIX_ARGS="-A pkgs.haskell.packages."${compiler}"."${attr}" ${nhroot}/nixpkgs.nix"
 NIX_DRV=$(nix-instantiate ${NIX_ARGS} "$@" 2>$LOG || true)
 if ! test -n "$NIX_DRV"
 then
