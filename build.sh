@@ -23,7 +23,7 @@ then
         exit 1
 fi
 
-if ! nix-store --realise ${NIX_DRV} "$@"
+if ! nix-store --realise ${NIX_DRV} -j4 --cores 0 "$@"
 then
         mkdir -p $(dirname ${LOG})
         echo "### Build failed:" >&2

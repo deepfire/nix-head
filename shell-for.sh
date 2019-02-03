@@ -11,4 +11,11 @@ nhroot="$(realpath $0 | xargs dirname)"
 
 echo "Entering shell for: ${attr}"
 set -x
-nix-shell "$@" -E "with (import ${nhroot}/nixpkgs.nix {}).haskell.packages.\"\${import ${nhroot}/default-compiler.nix}\"; shellFor { packages = p: [p.${attr}]; withHoogle = true; }"
+
+nix-shell "$@" -j4 --cores 0 -E \
+"{ compiler ? import ${nhroot}/default-compiler.nix }:
+with (import ${nhroot}/nixpkgs.nix {}).haskell.packages.\"\${compiler}\";
+  shellFor {
+    packages = p: [p.${attr}];
+    withHoogle = true;
+  }"
