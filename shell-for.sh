@@ -13,9 +13,11 @@ echo "Entering shell for: ${attr}"
 set -x
 
 nix-shell "$@" -j4 --cores 0 -E \
-"{ compiler ? import ${nhroot}/default-compiler.nix }:
-with (import ${nhroot}/nixpkgs.nix {}).haskell.packages.\"\${compiler}\";
+"{ compiler ? import ${nhroot}/default-compiler.nix, extra ? null, extras ? [\"ghcid\"] }:
+let ghc = (import ${nhroot}/nixpkgs.nix {}).haskell.packages.\"\${compiler}\";
+in with ghc;
   shellFor {
     packages = p: [p.${attr}];
     withHoogle = true;
+    buildInputs = map (name: ghc.\"\${name}\") ((if extra != null then [extra] else []) ++ extras);
   }"
