@@ -36,6 +36,7 @@ lib: self: super: with lib; with self; {
   haskell-src-exts     = { just = super.haskell-src-exts_1_21_0; doHaddock = false; };
   haskell-src-meta     = { jailbreak = true; };
   haskell-src-util     =                                      { scope = self: super: { haskell-src-exts = dontHaddock super.haskell-src-exts_1_21_0; }; };
+  hinotify             =                   { doHaddock = false; };
   hlint                = { jailbreak = true;                    scope = self: super: { haskell-src-exts = dontHaddock super.haskell-src-exts_1_21_0; }; };
   hoogle               =                                      { scope = self: super: { haskell-src-exts = dontHaddock super.haskell-src-exts_1_21_0; }; };
   io-streams           = { jailbreak = true; };
@@ -52,6 +53,7 @@ lib: self: super: with lib; with self; {
   reflex               = { jailbreak = true; doCheck   = false; scope = self: super: { haskell-src-exts = dontHaddock super.haskell-src-exts_1_21_0; };
                            extLists  = { libraryHaskellDepends =
                                            [ data-default filemanip hlint lens monad-control monoidal-containers prim-uniq reflection split unbounded-delays ]; }; };
+  shelly               = { jailbreak = true; };
   singletons           = { jailbreak = true; headPatch = false; };
   snap-server          = { jailbreak = true; doHaddock = false; };
   quickcheck-instances = { jailbreak = true; };
